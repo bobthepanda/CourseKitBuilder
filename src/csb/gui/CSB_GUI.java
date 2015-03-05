@@ -9,8 +9,11 @@ import csb.data.CourseDataView;
 import csb.data.CoursePage;
 import csb.controller.FileController;
 import csb.controller.ScheduleEditController;
+import csb.controller.LectureEditController;
 import csb.data.Instructor;
 import csb.data.ScheduleItem;
+import csb.data.Lecture;
+import csb.data.Assignment;
 import csb.data.Semester;
 import csb.data.Subject;
 import csb.file.CourseFileManager;
@@ -87,6 +90,9 @@ public class CSB_GUI implements CourseDataView {
     
     // THIS HANDLES REQUESTS TO ADD OR EDIT SCHEDULE STUFF
     ScheduleEditController scheduleController;
+    
+    // THIS HANDLES REQUESTS TO ADD OR EDIT LECTURE STUFF
+    LectureEditController lectureController;
 
     // THIS IS THE APPLICATION WINDOW
     Stage primaryStage;
@@ -152,6 +158,8 @@ public class CSB_GUI implements CourseDataView {
     VBox scheduleInfoPane;
     Label scheduleInfoHeadingLabel;
     SplitPane splitScheduleInfoPane;
+    VBox lecturePane;
+    VBox hwPane;
 
     // THESE GUYS GO IN THE LEFT HALF OF THE splitScheduleInfoPane
     GridPane dateBoundariesPane;
@@ -187,7 +195,7 @@ public class CSB_GUI implements CourseDataView {
     Button addLectureButton;
     Button removeLectureButton;
     Label lectureLabel;
-    TableView<ScheduleItem> lectureTable;
+    TableView<Lecture> lectureTable;
     TableColumn lectureTopicColumn;
     TableColumn numSessionsColumn;
     
@@ -635,6 +643,29 @@ public class CSB_GUI implements CourseDataView {
         scheduleItemsTable.getColumns().add(itemDatesColumn);
         scheduleItemsTable.getColumns().add(linkColumn);
         scheduleItemsTable.setItems(dataManager.getCourse().getScheduleItems());
+        
+        //NOW THE CONTROLS FOR ADDING LECTURES
+        lectureBox = new VBox();
+        lectureToolbar = new HBox();
+        lectureLabel = initLabel(CSB_PropertyType.LECTURES_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
+        addLectureButton = initChildButton(lectureToolbar, CSB_PropertyType.ADD_ICON, CSB_PropertyType.ADD_ITEM_TOOLTIP, false);
+        removeLectureButton = initChildButton(lectureToolbar, CSB_PropertyType.MINUS_ICON, CSB_PropertyType.REMOVE_ITEM_TOOLTIP, false);
+        lectureTable = new TableView();
+        lectureBox.getChildren().add(lectureLabel);
+        lectureBox.getChildren().add(lectureToolbar);
+        lectureBox.getChildren().add(lectureTable);
+        lectureBox.getStyleClass().add(CLASS_BORDERED_PANE);
+        
+        // NOW SETUP THE TABLE COLUMNS
+        lectureTopicColumn = new TableColumn(COL_TOPIC);
+        numSessionsColumn = new TableColumn(COL_SESSIONS);
+        
+        // AND LINK THE COLUMNS TO THE DATA
+        lectureTopicColumn.setCellValueFactory(new PropertyValueFactory<String, String>("topic"));
+        numSessionsColumn.setCellValueFactory(new PropertyValueFactory<Integer, String>("sessions"));
+        lectureTable.getColumns().add(lectureTopicColumn);
+        lectureTable.getColumns().add(numSessionsColumn);
+        lectureTable.setItems(dataManager.getCourse().getLectures());
           
         // NOW LET'S ASSEMBLE ALL THE CONTAINERS TOGETHER
 
@@ -651,7 +682,10 @@ public class CSB_GUI implements CourseDataView {
         schedulePane = new VBox();
         schedulePane.getChildren().add(scheduleInfoPane);
         schedulePane.getChildren().add(scheduleItemsBox);
+        schedulePane.getChildren().add(lectureBox);
         schedulePane.getStyleClass().add(CLASS_BORDERED_PANE);
+        
+        
     }
 
     // INITIALIZE THE WINDOW (i.e. STAGE) PUTTING ALL THE CONTROLS
@@ -779,6 +813,24 @@ public class CSB_GUI implements CourseDataView {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
                 ScheduleItem si = scheduleItemsTable.getSelectionModel().getSelectedItem();
                 scheduleController.handleEditScheduleItemRequest(this, si);
+            }
+        });
+        
+        // AND NOW THE SCHEDULE ITEM ADDING AND EDITING CONTROLS
+        lectureController = new LectureEditController(primaryStage, dataManager.getCourse(), messageDialog, yesNoCancelDialog);
+        addLectureButton.setOnAction(e -> {
+            lectureController.handleAddLectureRequest(this);
+        });
+        removeLectureButton.setOnAction(e -> {
+            lectureController.handleRemoveLectureRequest(this, lectureTable.getSelectionModel().getSelectedItem());
+        });
+        
+        // AND NOW THE SCHEDULE ITEMS TABLE
+        lectureTable.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                // OPEN UP THE SCHEDULE ITEM EDITOR
+                Lecture l = lectureTable.getSelectionModel().getSelectedItem();
+                lectureController.handleEditLectureRequest(this, l);
             }
         });
     }
