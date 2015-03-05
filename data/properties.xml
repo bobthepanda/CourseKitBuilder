@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This XML file allows us to easily customize the look and language used
+    in our program's user interface. Note that this is for customizing settings
+    for the Course Schedule Builder interface, NOT the Web page that we're building. 
+-->
+<properties>
+    <property_list>    
+        <property name="PROP_APP_TITLE"   value="Course Site Builder"></property>  
+        
+        <!-- PROGRAM ICON FILES -->
+        <property name="NEW_COURSE_ICON"    value="New.png"></property>
+        <property name="LOAD_COURSE_ICON"   value="Load.png"></property>
+        <property name="SAVE_COURSE_ICON"   value="Save.png"></property>
+        <property name="VIEW_SCHEDULE_ICON" value="View.png"></property>
+        <property name="EXPORT_PAGE_ICON"   value="Export.png"></property>
+        <property name="DELETE_ICON"        value="Delete.png"></property>
+        <property name="EXIT_ICON"          value="Exit.png"></property>        
+        <property name="ADD_ICON"           value="Add.png"></property>
+        <property name="MINUS_ICON"         value="Minus.png"></property>
+        <property name="MOVE_UP_ICON"       value="MoveUp.png"></property>
+        <property name="MOVE_DOWN_ICON"     value="MoveDown.png"></property>
+        
+        <!-- TOOLTIPS FOR BUTTONS -->
+        <property name="NEW_COURSE_TOOLTIP"         value="Create a New Course"></property>
+        <property name="LOAD_COURSE_TOOLTIP"        value="Load and Existing Course"></property>
+        <property name="SAVE_COURSE_TOOLTIP"        value="Save this Course"></property>
+        <property name="VIEW_SCHEDULE_TOOLTIP"      value="View the Schedule Page"></property>
+        <property name="EXPORT_PAGE_TOOLTIP"        value="Export the Schedule Page"></property>
+        <property name="DELETE_TOOLTIP"             value="Delete this Course"></property>
+        <property name="EXIT_TOOLTIP"               value="Exit the Application"></property>
+        <property name="ADD_ITEM_TOOLTIP"           value="Add Schedule Item"></property>
+        <property name="REMOVE_ITEM_TOOLTIP"        value="Remove Schedule Item"></property>
+        <property name="ADD_LECTURE_TOOLTIP"        value="Add Lecture"></property>
+        <property name="REMOVE_LECTURE_TOOLTIP"     value="Remove Lecture"></property>
+        <property name="MOVE_UP_LECTURE_TOOLTIP"    value="Move Up Lecture"></property>
+        <property name="MOVE_DOWN_LECTURE_TOOLTIP"  value="Move Down Lecture"></property>
+        <property name="ADD_HW_TOOLTIP"             value="Add Assignment"></property>
+        <property name="REMOVE_HW_TOOLTIP"          value="Remove Assignment"></property>
+        
+        <!-- GUI LABELS -->
+        <property name="COURSE_HEADING_LABEL"           value="Course Site Details"></property>
+        <property name="COURSE_INFO_LABEL"              value="Course Information"></property>
+        <property name="COURSE_SUBJECT_LABEL"           value="Subject:"></property>
+        <property name="COURSE_NUMBER_LABEL"            value="Number:"></property>
+        <property name="COURSE_SEMESTER_LABEL"          value="Semester:"></property>
+        <property name="COURSE_YEAR_LABEL"              value="Year:"></property>
+        <property name="COURSE_TITLE_LABEL"             value="Title:"></property>
+        <property name="INSTRUCTOR_NAME_LABEL"          value="Instrctor Name:"></property>
+        <property name="INSTRUCTOR_URL_LABEL"           value="Instructor Homepage:"></property>
+        <property name="PAGES_SELECTION_HEADING_LABEL"  value="Site Pages"></property>
+        <property name="SCHEDULE_HEADING_LABEL"         value="Course Schedule"></property>
+        <property name="DATE_BOUNDARIES_LABEL"          value="Semester Dates"></property>
+        <property name="STARTING_MONDAY_LABEL"          value="Starting Monday:"></property>
+        <property name="ENDING_FRIDAY_LABEL"            value="Ending Friday:"></property>
+        <property name="SCHEDULE_ITEMS_HEADING_LABEL"   value="Schedule Items"></property>
+        <property name="LECTURES_HEADING_LABEL"         value="Lectures"></property>
+        <property name="HWS_HEADING_LABEL"              value="Assignments"></property>
+        
+        <!-- ERROR MESSAGES -->
+        <property name="START_DATE_AFTER_END_DATE_ERROR_MESSAGE"    value="The Starting Monday cannot be chronologically after the Ending Friday"></property>
+        <property name="START_DATE_NOT_A_MONDAY_ERROR_MESSAGE"      value="The Start Date must be a Monday"></property>
+        <property name="END_DATE_NOT_A_FRIDAY_ERROR_MESSAGE"        value="The End Date must be a Friday"></property>
+        <property name="ILLEGAL_DATE_MESSAGE"                       value="Illegal Date Selection"></property>
+        <property name="CLOSE_BUTTON_TEXT"                          value="Close"></property>
+
+        <!-- VERIFICATION MESSAGES -->
+        <property name="NEW_COURSE_CREATED_MESSAGE"     value="New Course Created but not yet Saved"></property>
+        <property name="COURSE_LOADED_MESSAGE"          value="The Course has been Loaded"></property>
+        <property name="COURSE_SAVED_MESSAGE"           value="The Course has been Saved"></property>
+        <property name="SITE_EXPORTED_MESSAGE"          value="The Course Site has been Exported"></property>
+        <property name="SAVE_UNSAVED_WORK_MESSAGE"      value="Do you want to save your unsaved work first?"></property>
+        <property name="REMOVE_ITEM_MESSAGE"            value="Are you sure you wish to remove the item?"></property>
+    </property_list>
+    <property_options_list>
+    </property_options_list>
+</properties>
