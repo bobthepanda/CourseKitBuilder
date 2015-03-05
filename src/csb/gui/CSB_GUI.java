@@ -182,26 +182,25 @@ public class CSB_GUI implements CourseDataView {
     TableColumn linkColumn;
     
     // THIS REGION IS FOR MANAGING LECTURES
-    VBox legendBox;
-    HBox scheduleItemsToolbar;
-    Button addScheduleItemButton;
-    Button removeScheduleItemButton;
-    Label scheduleItemsLabel;
-    TableView<ScheduleItem> scheduleItemsTable;
-    TableColumn itemDescriptionsColumn;
-    TableColumn itemDatesColumn;
-    TableColumn linkColumn;
+    VBox lectureBox;
+    HBox lectureToolbar;
+    Button addLectureButton;
+    Button removeLectureButton;
+    Label lectureLabel;
+    TableView<ScheduleItem> lectureTable;
+    TableColumn lectureTopicColumn;
+    TableColumn numSessionsColumn;
     
     // THIS REGION IS FOR MANAGING SCHEDULE ITEMS OTHER THAN LECTURES AND HWS
-    VBox scheduleItemsBox;
-    HBox scheduleItemsToolbar;
-    Button addScheduleItemButton;
-    Button removeScheduleItemButton;
-    Label scheduleItemsLabel;
-    TableView<ScheduleItem> scheduleItemsTable;
-    TableColumn itemDescriptionsColumn;
-    TableColumn itemDatesColumn;
-    TableColumn linkColumn;
+    VBox hwBox;
+    HBox hwToolbar;
+    Button addHwButton;
+    Button removeHwButton;
+    Label hwLabel;
+    TableView<ScheduleItem> hwTable;
+    TableColumn hwNameColumn;
+    TableColumn hwTopicColumn;
+    TableColumn hwDatesColumn;
     
     // AND TABLE COLUMNS
     static final String COL_DESCRIPTION = "Description";
