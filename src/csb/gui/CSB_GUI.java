@@ -194,6 +194,8 @@ public class CSB_GUI implements CourseDataView {
     HBox lectureToolbar;
     Button addLectureButton;
     Button removeLectureButton;
+    Button upButton;
+    Button downButton;
     Label lectureLabel;
     TableView<Lecture> lectureTable;
     TableColumn lectureTopicColumn;
@@ -650,6 +652,8 @@ public class CSB_GUI implements CourseDataView {
         lectureLabel = initLabel(CSB_PropertyType.LECTURES_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
         addLectureButton = initChildButton(lectureToolbar, CSB_PropertyType.ADD_ICON, CSB_PropertyType.ADD_ITEM_TOOLTIP, false);
         removeLectureButton = initChildButton(lectureToolbar, CSB_PropertyType.MINUS_ICON, CSB_PropertyType.REMOVE_ITEM_TOOLTIP, false);
+        upButton = initChildButton(lectureToolbar,CSB_PropertyType.MOVE_UP_ICON,CSB_PropertyType.MOVE_UP_LECTURE_TOOLTIP, false);
+        downButton = initChildButton(lectureToolbar,CSB_PropertyType.MOVE_DOWN_ICON,CSB_PropertyType.MOVE_DOWN_LECTURE_TOOLTIP,false);
         lectureTable = new TableView();
         lectureBox.getChildren().add(lectureLabel);
         lectureBox.getChildren().add(lectureToolbar);
@@ -816,7 +820,7 @@ public class CSB_GUI implements CourseDataView {
             }
         });
         
-        // AND NOW THE SCHEDULE ITEM ADDING AND EDITING CONTROLS
+        // AND NOW THE LECTURE ADDING AND EDITING CONTROLS
         lectureController = new LectureEditController(primaryStage, dataManager.getCourse(), messageDialog, yesNoCancelDialog);
         addLectureButton.setOnAction(e -> {
             lectureController.handleAddLectureRequest(this);
@@ -825,7 +829,16 @@ public class CSB_GUI implements CourseDataView {
             lectureController.handleRemoveLectureRequest(this, lectureTable.getSelectionModel().getSelectedItem());
         });
         
-        // AND NOW THE SCHEDULE ITEMS TABLE
+        // AND NOW THE LECTURE MOVING CONTROLS
+        upButton.setOnAction(e -> {
+            lectureController.handleUpRequest(this, lectureTable.getSelectionModel(), lectureTable.getSelectionModel().getSelectedItem());
+        });
+        
+        downButton.setOnAction(e -> {
+            lectureController.handleDownRequest(this, lectureTable.getSelectionModel(), lectureTable.getSelectionModel().getSelectedItem());
+        });
+        
+        // AND NOW THE LECTURE TABLE
         lectureTable.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
