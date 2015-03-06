@@ -92,7 +92,7 @@ public class LectureEditController {
         }
     }
 
-    //MOVES LECTURES UP IN THE LIST
+    //MOVES LECTURES DOWN IN THE LIST
     public void handleDownRequest(CSB_GUI gui, TableViewSelectionModel<Lecture> list, Lecture lectureToMove) {
         ObservableList<Lecture> lectures = gui.getDataManager().getCourse().getLectures();
         int index = lectures.indexOf(lectureToMove);

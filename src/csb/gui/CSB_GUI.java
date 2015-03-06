@@ -10,6 +10,7 @@ import csb.data.CoursePage;
 import csb.controller.FileController;
 import csb.controller.ScheduleEditController;
 import csb.controller.LectureEditController;
+import csb.controller.hwEditController;
 import csb.data.Instructor;
 import csb.data.ScheduleItem;
 import csb.data.Lecture;
@@ -94,6 +95,9 @@ public class CSB_GUI implements CourseDataView {
     // THIS HANDLES REQUESTS TO ADD OR EDIT LECTURE STUFF
     LectureEditController lectureController;
 
+    // THIS HANDLES REQUESTS TO ADD OR EDIT HW STUFF
+    hwEditController hwController;
+    
     // THIS IS THE APPLICATION WINDOW
     Stage primaryStage;
 
@@ -207,7 +211,7 @@ public class CSB_GUI implements CourseDataView {
     Button addHwButton;
     Button removeHwButton;
     Label hwLabel;
-    TableView<ScheduleItem> hwTable;
+    TableView<Assignment> hwTable;
     TableColumn hwNameColumn;
     TableColumn hwTopicColumn;
     TableColumn hwDatesColumn;
@@ -670,7 +674,33 @@ public class CSB_GUI implements CourseDataView {
         lectureTable.getColumns().add(lectureTopicColumn);
         lectureTable.getColumns().add(numSessionsColumn);
         lectureTable.setItems(dataManager.getCourse().getLectures());
-          
+        
+        // NOW THE CONTROLS FOR ADDING HW ITEMS
+        hwBox = new VBox();
+        hwToolbar = new HBox();
+        hwLabel = initLabel(CSB_PropertyType.HWS_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
+        addHwButton = initChildButton(hwToolbar, CSB_PropertyType.ADD_ICON, CSB_PropertyType.ADD_ITEM_TOOLTIP, false);
+        removeHwButton = initChildButton(hwToolbar, CSB_PropertyType.MINUS_ICON, CSB_PropertyType.REMOVE_ITEM_TOOLTIP, false);
+        hwTable = new TableView();
+        hwBox.getChildren().add(hwLabel);
+        hwBox.getChildren().add(hwToolbar);
+        hwBox.getChildren().add(hwTable);
+        hwBox.getStyleClass().add(CLASS_BORDERED_PANE);
+        
+        // NOW SETUP THE TABLE COLUMNS
+        hwNameColumn = new TableColumn(COL_NAME);
+        hwTopicColumn = new TableColumn(COL_TOPICS);
+        hwDatesColumn = new TableColumn(COL_DATE);
+        
+        // AND LINK THE COLUMNS TO THE DATA
+        hwNameColumn.setCellValueFactory(new PropertyValueFactory<String, String>("name"));
+        hwTopicColumn.setCellValueFactory(new PropertyValueFactory<LocalDate, String>("topics"));
+        hwDatesColumn.setCellValueFactory(new PropertyValueFactory<URL, String>("date"));
+        hwTable.getColumns().add(hwNameColumn);
+        hwTable.getColumns().add(hwTopicColumn);
+        hwTable.getColumns().add(hwDatesColumn);
+        hwTable.setItems(dataManager.getCourse().getAssignments());
+        
         // NOW LET'S ASSEMBLE ALL THE CONTAINERS TOGETHER
 
         // THIS IS FOR STUFF IN THE TOP OF THE SCHEDULE PANE, WE NEED TO PUT TWO THINGS INSIDE
@@ -687,6 +717,7 @@ public class CSB_GUI implements CourseDataView {
         schedulePane.getChildren().add(scheduleInfoPane);
         schedulePane.getChildren().add(scheduleItemsBox);
         schedulePane.getChildren().add(lectureBox);
+        schedulePane.getChildren().add(hwBox);
         schedulePane.getStyleClass().add(CLASS_BORDERED_PANE);
         
         
@@ -827,6 +858,15 @@ public class CSB_GUI implements CourseDataView {
         });
         removeLectureButton.setOnAction(e -> {
             lectureController.handleRemoveLectureRequest(this, lectureTable.getSelectionModel().getSelectedItem());
+        });
+        
+        // AND NOW THE HW ADDING AND EDITING CONTROLS
+        hwController = new hwEditController(primaryStage, dataManager.getCourse(), messageDialog, yesNoCancelDialog);
+        addHwButton.setOnAction(e -> {
+            hwController.handleAddHwRequest(this);
+        });
+        removeHwButton.setOnAction(e -> {
+            hwController.handleRemoveHwRequest(this, hwTable.getSelectionModel().getSelectedItem());
         });
         
         // AND NOW THE LECTURE MOVING CONTROLS
