@@ -68,7 +68,7 @@ public class CourseSiteExporter {
     public static final String CLASS_HOLIDAY = "holiday";
     public static final String CLASS_LECTURE = "lecture";
     public static final String CLASS_HW = "hw";
-    public static final String CLASS_HWS = "hw";
+    public static final String CLASS_HWS = "hws";
 
     // THIS IS TEXT WE'LL BE ADDING TO OUR PAGE
     public static final String INDEX_HEADER = "Home";
@@ -294,6 +294,7 @@ public class CourseSiteExporter {
         Document hwsDoc = initDoc(courseToExport, CoursePage.HWS, HWS_PAGE);
 
         // MISSING UPDATING THE TABLE
+        fillHwsTable(hwsDoc, courseToExport);
 
         // AND RETURN THE FULL PAGE DOM
         return hwsDoc;
@@ -498,6 +499,39 @@ public class CourseSiteExporter {
         dayOfWeekHeader.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
         dayOfWeekHeader.setTextContent(dayOfWeekText);
         tableRow.appendChild(dayOfWeekHeader);
+    }
+    
+    // SETS UP THE TABLE FOR THE HWS PAGE
+    private void fillHwsTable(Document scheduleDoc, Course courseToExport) {
+        Node table = scheduleDoc.getElementsByTagName(HTML.Tag.TABLE.toString()).item(0);
+        List<Assignment> list = courseToExport.getAssignments();
+        int r = 240;
+        int g = 240;
+        int b = 255;
+        for (Assignment a : list) {
+            Element tableRow = scheduleDoc.createElement(HTML.Tag.TR.toString());
+            tableRow.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+            tableRow.setAttribute(HTML.Attribute.STYLE.toString(), "background-color:rgb(" + r + "," + g + "," + b +")");
+            r -= 10;
+            g -= 10;
+            b -= 5;
+            table.appendChild(tableRow);
+            
+            Element name = scheduleDoc.createElement(HTML.Tag.TD.toString());
+            name.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+            name.setTextContent(a.getName());
+            tableRow.appendChild(name);
+            
+            Element date = scheduleDoc.createElement(HTML.Tag.TD.toString());
+            date.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+            date.setTextContent(a.getDate().toString());
+            tableRow.appendChild(date);
+            
+            Element third = scheduleDoc.createElement(HTML.Tag.TD.toString());
+            third.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
+            third.setTextContent("TBD");
+            tableRow.appendChild(third);
+        }
     }
 
     // SETS UP THE LINKS IN THE NAVBAR AT THE TOP OF THE PAGE
