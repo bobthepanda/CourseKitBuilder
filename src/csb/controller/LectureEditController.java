@@ -59,6 +59,7 @@ public class LectureEditController {
             Lecture l = ld.getLecture();
             lectureToEdit.setTopic(l.getTopic());
             lectureToEdit.setSessions(l.getSessions());
+            course.getLectures().set(course.getLectures().indexOf(lectureToEdit), lectureToEdit);
         } else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
             // WE DO NOTHING
