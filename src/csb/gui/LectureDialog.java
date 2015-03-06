@@ -74,7 +74,7 @@ public class LectureDialog  extends Stage {
         headingLabel = new Label(SCHEDULE_ITEM_HEADING);
         headingLabel.getStyleClass().add(CLASS_HEADING_LABEL);
     
-        // NOW THE DESCRIPTION 
+        // NOW THE TOPIC
         topicLabel = new Label(TOPIC_PROMPT);
         topicLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         topicTextField = new TextField();
@@ -82,7 +82,7 @@ public class LectureDialog  extends Stage {
             lecture.setTopic(newValue);
         });
         
-        // AND THE DATE
+        // AND THE SESSIONS
         sessionsLabel = new Label(SESSIONS_PROMPT);
         sessionsLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         sessionsBox = new ComboBox();
@@ -90,7 +90,7 @@ public class LectureDialog  extends Stage {
             sessionsBox.getItems().add(i);
         }
         sessionsBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            lecture.setSessions((int)newValue);
+            lecture.setSessions(Integer.valueOf(newValue.toString()));
         });
         
         // AND FINALLY, THE BUTTONS

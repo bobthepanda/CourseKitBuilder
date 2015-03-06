@@ -362,6 +362,11 @@ public class CourseSiteExporter {
             days.add(day.getValue() -1);
         }
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
+        List<Assignment> hws = courseToExport.getAssignments();
+        List<LocalDate> dates = new ArrayList<LocalDate>();
+        for (Assignment hw: hws) {
+            dates.add(hw.getDate());
+        }
 
         while (countingDate.isBefore(courseToExport.getEndingFriday())
                 || countingDate.isEqual(courseToExport.getEndingFriday())) {
@@ -423,6 +428,7 @@ public class CourseSiteExporter {
                         Lecture l = list.get(lectureCounter - 1);
                         Node topic = scheduleDoc.createTextNode(l.getTopic());
                         dayCell.appendChild(topic);
+                        dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
                         
                         // CONTROL FOR # OF SESSIONS
                         if (l.getSessions() != 1) {
@@ -433,7 +439,20 @@ public class CourseSiteExporter {
                         }
                     }
                 }
-
+                
+                // IS THERE HW DUE THAT DAY?
+                if (dates.contains(countingDate)) {
+                    Assignment today = hws.get(dates.indexOf(countingDate));
+                    Element hw = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
+                    hw.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HW);
+                    hw.setTextContent(today.getName());
+                    dayCell.appendChild(hw);
+                    dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                    dayCell.appendChild(scheduleDoc.createTextNode("due @11:59PM"));
+                    dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                    dayCell.appendChild(scheduleDoc.createTextNode("("+today.getTopics()+")"));
+                }
+                
                 // FIRST SCHEDULE ITEMS
                 countingDate = countingDate.plusDays(1);
             }

@@ -401,6 +401,7 @@ public class CSB_GUI implements CourseDataView {
         fridayCheckBox.setSelected(courseToReload.hasLectureDay(DayOfWeek.FRIDAY));
         
         // THE SCHEDULE ITEMS TABLE
+        
        
         // THE LECTURES TABLE
         
@@ -860,15 +861,6 @@ public class CSB_GUI implements CourseDataView {
             lectureController.handleRemoveLectureRequest(this, lectureTable.getSelectionModel().getSelectedItem());
         });
         
-        // AND NOW THE HW ADDING AND EDITING CONTROLS
-        hwController = new hwEditController(primaryStage, dataManager.getCourse(), messageDialog, yesNoCancelDialog);
-        addHwButton.setOnAction(e -> {
-            hwController.handleAddHwRequest(this);
-        });
-        removeHwButton.setOnAction(e -> {
-            hwController.handleRemoveHwRequest(this, hwTable.getSelectionModel().getSelectedItem());
-        });
-        
         // AND NOW THE LECTURE MOVING CONTROLS
         upButton.setOnAction(e -> {
             lectureController.handleUpRequest(this, lectureTable.getSelectionModel(), lectureTable.getSelectionModel().getSelectedItem());
@@ -884,6 +876,24 @@ public class CSB_GUI implements CourseDataView {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
                 Lecture l = lectureTable.getSelectionModel().getSelectedItem();
                 lectureController.handleEditLectureRequest(this, l);
+            }
+        });
+        
+        // AND NOW THE HW ADDING AND EDITING CONTROLS
+        hwController = new hwEditController(primaryStage, dataManager.getCourse(), messageDialog, yesNoCancelDialog);
+        addHwButton.setOnAction(e -> {
+            hwController.handleAddHwRequest(this);
+        });
+        removeHwButton.setOnAction(e -> {
+            hwController.handleRemoveHwRequest(this, hwTable.getSelectionModel().getSelectedItem());
+        });
+        
+        // AND NOW THE LECTURE TABLE
+        hwTable.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                // OPEN UP THE SCHEDULE ITEM EDITOR
+                Assignment hw = hwTable.getSelectionModel().getSelectedItem();
+                hwController.handleEditHwRequest(this, hw);
             }
         });
     }
