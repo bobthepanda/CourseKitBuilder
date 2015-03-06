@@ -13,9 +13,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javafx.collections.ObservableList;
 import javax.swing.text.html.HTML;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -353,6 +356,11 @@ public class CourseSiteExporter {
     private void fillScheduleTable(Document scheduleDoc, Course courseToExport) {
         LocalDate countingDate = courseToExport.getStartingMonday().minusDays(0);
         int lectureCounter = 1;
+        ObservableList<Lecture> list = courseToExport.getLectures();
+        List<Integer> days = new ArrayList<Integer>();
+        for (DayOfWeek day : courseToExport.getLectureDays()) {
+            days.add(day.getValue() -1);
+        }
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
 
         while (countingDate.isBefore(courseToExport.getEndingFriday())
@@ -400,6 +408,30 @@ public class CourseSiteExporter {
                 } else {
                     // SET THE DATE TO A REGULAR DAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+                    
+                    // IS IT A LECTURE DAY?
+                    if (days.contains(i) && lectureCounter - 1 < list.size()) {
+                        
+                        // SET LECTURE & NUMBER
+                        Element lecture = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
+                        lecture.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_LECTURE);
+                        lecture.setTextContent("Lecture " + lectureCounter);
+                        dayCell.appendChild(lecture);
+                        dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                        
+                        // APPEND NAME OF TOPIC
+                        Lecture l = list.get(lectureCounter - 1);
+                        Node topic = scheduleDoc.createTextNode(l.getTopic());
+                        dayCell.appendChild(topic);
+                        
+                        // CONTROL FOR # OF SESSIONS
+                        if (l.getSessions() != 1) {
+                            l.setSessions(l.getSessions()-1);
+                        }
+                        else {
+                            lectureCounter += 1;
+                        }
+                    }
                 }
 
                 // FIRST SCHEDULE ITEMS
