@@ -40,6 +40,9 @@ public class hwEditController {
             
             // AND ADD IT AS A ROW TO THE TABLE
             course.addAssignment(hw);
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -59,6 +62,9 @@ public class hwEditController {
             hw.setName(newHW.getName());
             hw.setDate(newHW.getDate());
             hw.setTopics(newHW.getTopics());
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -76,6 +82,9 @@ public class hwEditController {
         // IF THE USER SAID YES, THEN SAVE BEFORE MOVING ON
         if (selection.equals(YesNoCancelDialog.YES)) { 
             gui.getDataManager().getCourse().removeAssignment(hw);
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
     }
 }

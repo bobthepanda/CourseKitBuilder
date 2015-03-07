@@ -42,6 +42,9 @@ public class LectureEditController {
 
             // AND ADD IT AS A ROW TO THE TABLE
             course.addLecture(l);
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         } else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
             // WE DO NOTHING
@@ -60,6 +63,9 @@ public class LectureEditController {
             lectureToEdit.setTopic(l.getTopic());
             lectureToEdit.setSessions(l.getSessions());
             course.getLectures().set(course.getLectures().indexOf(lectureToEdit), lectureToEdit);
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         } else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
             // WE DO NOTHING
@@ -72,6 +78,9 @@ public class LectureEditController {
 
         // AND NOW GET THE USER'S SELECTION
         String selection = yesNoCancelDialog.getSelection();
+        
+        // AND ALLOW SAVING
+        gui.getFileController().markAsEdited(gui);
 
         // IF THE USER SAID YES, THEN SAVE BEFORE MOVING ON
         if (selection.equals(YesNoCancelDialog.YES)) {
@@ -90,6 +99,8 @@ public class LectureEditController {
             lectures.set(index - 1, lectureToMove);
             //MOVES THE POSITION OF THE SELECTED INDEX TO THE NEW ONE
             list.clearAndSelect(index-1);
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
     }
 
@@ -104,6 +115,8 @@ public class LectureEditController {
             lectures.set(index + 1, lectureToMove);
             //MOVES THE POSITION OF THE SELECTED INDEX TO THE NEW ONE
             list.clearAndSelect(index+1);
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
     }
 }

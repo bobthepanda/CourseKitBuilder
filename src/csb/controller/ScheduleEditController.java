@@ -40,6 +40,9 @@ public class ScheduleEditController {
             
             // AND ADD IT AS A ROW TO THE TABLE
             course.addScheduleItem(si);
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -59,6 +62,9 @@ public class ScheduleEditController {
             itemToEdit.setDescription(si.getDescription());
             itemToEdit.setDate(si.getDate());
             itemToEdit.setLink(si.getLink());
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
@@ -76,6 +82,9 @@ public class ScheduleEditController {
         // IF THE USER SAID YES, THEN SAVE BEFORE MOVING ON
         if (selection.equals(YesNoCancelDialog.YES)) { 
             gui.getDataManager().getCourse().removeScheduleItem(itemToRemove);
+            
+            // AND ALLOW SAVING
+            gui.getFileController().markAsEdited(gui);
         }
     }
 }
