@@ -206,11 +206,6 @@ public class FileController {
             
             // AND EXPORT THE COURSE
             exporter.exportCourseSite(courseToExport);
-            
-            // AND THEN OPEN UP THE PAGE IN A BROWSER
-            Stage webBrowserStage = new Stage();
-            WebBrowser webBrowser = new WebBrowser(webBrowserStage, courseURL);
-            webBrowserStage.show();
         }
         // WE'LL HANDLE COURSE EXPORT PROBLEMS AND COURSE PAGE VIEWING
         // PROBLEMS USING DIFFERENT ERROR MESSAGES

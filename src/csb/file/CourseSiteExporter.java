@@ -7,6 +7,7 @@ import csb.data.CoursePage;
 import csb.data.Instructor;
 import csb.data.Lecture;
 import csb.data.ScheduleItem;
+import csb.gui.WebBrowser;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -171,15 +172,15 @@ public class CourseSiteExporter {
         ReentrantLock progressLock = new ReentrantLock();
         VBox box = new VBox();
         box.setSpacing(20);
-        box.setPadding(new Insets(20,20,20,20));
+        box.setPadding(new Insets(20, 20, 20, 20));
         box.setPrefWidth(500);
         box.setAlignment(Pos.CENTER);
 
         Label processLabel = new Label("Exporting");
-        processLabel.setFont(Font.font("Franklin Gothic",  36));
+        processLabel.setFont(Font.font("Franklin Gothic", 36));
         HBox toolbar = new HBox();
         toolbar.setSpacing(20);
-        toolbar.setPadding(new Insets(20,20,20,20));
+        toolbar.setPadding(new Insets(20, 20, 20, 20));
         ProgressBar bar = new ProgressBar(0);
         ProgressIndicator indicator = new ProgressIndicator(0);
         toolbar.getChildren().add(bar);
@@ -192,7 +193,7 @@ public class CourseSiteExporter {
         Scene scene = new Scene(box);
         progressStage.setScene(scene);
         progressStage.show();
-        
+
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -205,26 +206,35 @@ public class CourseSiteExporter {
                         CoursePage page = pages[pageIndex];
                         if (courseToExport.hasCoursePage(page)) {
                             // CALCULATE THE PROGRESS
-                            exportPage(pages[pageIndex], courseToExport, courseExportPath);
-                            //UPDATES PROGRESS IN SEPARATE THREAD
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     processLabel.setText("Exporting " + page.toString() + " page");
                                     bar.setProgress(perc);
                                     indicator.setProgress(perc);
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (Exception e) {
-                                    }
                                 }
                             });
+                            exportPage(pages[pageIndex], courseToExport, courseExportPath);
                         }
-
-                        Thread.sleep(1000);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                        }
                     }
                 } finally {
                     progressLock.unlock();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            Stage webBrowserStage = new Stage();
+                            try {
+                                WebBrowser webBrowser = new WebBrowser(webBrowserStage, getPageURLPath(courseToExport, CoursePage.SCHEDULE));
+                            }
+                            catch (Exception e) {}
+                            webBrowserStage.show();
+                            progressStage.hide();
+                        }
+                    });
                 }
                 return null;
             }
