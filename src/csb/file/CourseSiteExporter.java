@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javafx.collections.ObservableList;
+import javafx.scene.text.Font;
+import javafx.geometry.Insets;
 import javax.swing.text.html.HTML;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +40,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+import java.util.concurrent.locks.ReentrantLock;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * This class is responsible for exporting schedule.html to its proper
@@ -148,12 +164,73 @@ public class CourseSiteExporter {
         }
 
         CoursePage[] pages = CoursePage.values();
-        for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-            if (courseToExport.hasCoursePage(pages[pageIndex])) {
-                // CALCULATE THE PROGRESS
-                exportPage(pages[pageIndex], courseToExport, courseExportPath);
+        List<CoursePage> listedPages = courseToExport.getPages();
+
+        //SETTING PROGRESS BAR WINDOW
+        Stage progressStage = new Stage();
+        ReentrantLock progressLock = new ReentrantLock();
+        VBox box = new VBox();
+        box.setSpacing(20);
+        box.setPadding(new Insets(20,20,20,20));
+        box.setPrefWidth(500);
+        box.setAlignment(Pos.CENTER);
+
+        Label processLabel = new Label("Exporting");
+        processLabel.setFont(Font.font("Franklin Gothic",  36));
+        HBox toolbar = new HBox();
+        toolbar.setSpacing(20);
+        toolbar.setPadding(new Insets(20,20,20,20));
+        ProgressBar bar = new ProgressBar(0);
+        ProgressIndicator indicator = new ProgressIndicator(0);
+        toolbar.getChildren().add(bar);
+        toolbar.getChildren().add(indicator);
+        toolbar.setAlignment(Pos.CENTER);
+
+        box.getChildren().add(processLabel);
+        box.getChildren().add(toolbar);
+
+        Scene scene = new Scene(box);
+        progressStage.setScene(scene);
+        progressStage.show();
+        
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    int donePages = 0;
+                    progressLock.lock();
+                    for (pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+                        donePages += 1;
+                        perc = (1.00 * donePages) / listedPages.size();
+                        CoursePage page = pages[pageIndex];
+                        if (courseToExport.hasCoursePage(page)) {
+                            // CALCULATE THE PROGRESS
+                            exportPage(pages[pageIndex], courseToExport, courseExportPath);
+                            //UPDATES PROGRESS IN SEPARATE THREAD
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    processLabel.setText("Exporting " + page.toString() + " page");
+                                    bar.setProgress(perc);
+                                    indicator.setProgress(perc);
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            });
+                        }
+
+                        Thread.sleep(1000);
+                    }
+                } finally {
+                    progressLock.unlock();
+                }
+                return null;
             }
-        }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
     /**
@@ -360,12 +437,12 @@ public class CourseSiteExporter {
         ObservableList<Lecture> list = courseToExport.getLectures();
         List<Integer> days = new ArrayList<Integer>();
         for (DayOfWeek day : courseToExport.getLectureDays()) {
-            days.add(day.getValue() -1);
+            days.add(day.getValue() - 1);
         }
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
         List<Assignment> hws = courseToExport.getAssignments();
         List<LocalDate> dates = new ArrayList<LocalDate>();
-        for (Assignment hw: hws) {
+        for (Assignment hw : hws) {
             dates.add(hw.getDate());
         }
 
@@ -414,33 +491,32 @@ public class CourseSiteExporter {
                 } else {
                     // SET THE DATE TO A REGULAR DAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
-                    
+
                     // IS IT A LECTURE DAY?
                     if (days.contains(i) && lectureCounter - 1 < list.size()) {
-                        
+
                         // SET LECTURE & NUMBER
                         Element lecture = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
                         lecture.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_LECTURE);
                         lecture.setTextContent("Lecture " + lectureCounter);
                         dayCell.appendChild(lecture);
                         dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
-                        
+
                         // APPEND NAME OF TOPIC
                         Lecture l = list.get(lectureCounter - 1);
                         Node topic = scheduleDoc.createTextNode(l.getTopic());
                         dayCell.appendChild(topic);
                         dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
-                        
+
                         // CONTROL FOR # OF SESSIONS
                         if (l.getSessions() != 1) {
-                            l.setSessions(l.getSessions()-1);
-                        }
-                        else {
+                            l.setSessions(l.getSessions() - 1);
+                        } else {
                             lectureCounter += 1;
                         }
                     }
                 }
-                
+
                 // IS THERE HW DUE THAT DAY?
                 if (dates.contains(countingDate)) {
                     Assignment today = hws.get(dates.indexOf(countingDate));
@@ -451,9 +527,9 @@ public class CourseSiteExporter {
                     dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
                     dayCell.appendChild(scheduleDoc.createTextNode("due @11:59PM"));
                     dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
-                    dayCell.appendChild(scheduleDoc.createTextNode("("+today.getTopics()+")"));
+                    dayCell.appendChild(scheduleDoc.createTextNode("(" + today.getTopics() + ")"));
                 }
-                
+
                 // FIRST SCHEDULE ITEMS
                 countingDate = countingDate.plusDays(1);
             }
@@ -500,7 +576,7 @@ public class CourseSiteExporter {
         dayOfWeekHeader.setTextContent(dayOfWeekText);
         tableRow.appendChild(dayOfWeekHeader);
     }
-    
+
     // SETS UP THE TABLE FOR THE HWS PAGE
     private void fillHwsTable(Document scheduleDoc, Course courseToExport) {
         Node table = scheduleDoc.getElementsByTagName(HTML.Tag.TABLE.toString()).item(0);
@@ -511,22 +587,22 @@ public class CourseSiteExporter {
         for (Assignment a : list) {
             Element tableRow = scheduleDoc.createElement(HTML.Tag.TR.toString());
             tableRow.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
-            tableRow.setAttribute(HTML.Attribute.STYLE.toString(), "background-color:rgb(" + r + "," + g + "," + b +")");
+            tableRow.setAttribute(HTML.Attribute.STYLE.toString(), "background-color:rgb(" + r + "," + g + "," + b + ")");
             r -= 10;
             g -= 10;
             b -= 5;
             table.appendChild(tableRow);
-            
+
             Element name = scheduleDoc.createElement(HTML.Tag.TD.toString());
             name.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
             name.setTextContent(a.getName());
             tableRow.appendChild(name);
-            
+
             Element date = scheduleDoc.createElement(HTML.Tag.TD.toString());
             date.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
             date.setTextContent(a.getDate().toString());
             tableRow.appendChild(date);
-            
+
             Element third = scheduleDoc.createElement(HTML.Tag.TD.toString());
             third.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
             third.setTextContent("TBD");
