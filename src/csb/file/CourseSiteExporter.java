@@ -456,6 +456,7 @@ public class CourseSiteExporter {
             dates.add(hw.getDate());
         }
 
+        String s = "";
         while (countingDate.isBefore(courseToExport.getEndingFriday())
                 || countingDate.isEqual(courseToExport.getEndingFriday())) {
             // ADD THE MONDAY-FRIDAY HEADERS            
@@ -517,12 +518,18 @@ public class CourseSiteExporter {
                         Node topic = scheduleDoc.createTextNode(l.getTopic());
                         dayCell.appendChild(topic);
                         dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                        if (s.length() > 0) {
+                            dayCell.appendChild(scheduleDoc.createTextNode(s));
+                            dayCell.appendChild(scheduleDoc.createElement(HTML.Tag.BR.toString()));
+                        }
+                        l.setSessions(l.getSessions() - 1);
 
                         // CONTROL FOR # OF SESSIONS
-                        if (l.getSessions() != 1) {
-                            l.setSessions(l.getSessions() - 1);
+                        if (l.getSessions() > 0) {
+                            s = "(continued)";
                         } else {
                             lectureCounter += 1;
+                            s = "";
                         }
                     }
                 }
