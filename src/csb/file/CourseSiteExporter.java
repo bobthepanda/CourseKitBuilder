@@ -222,6 +222,7 @@ public class CourseSiteExporter {
                         }
                     }
                 } finally {
+                    //HIDE PROGRESS WINDOW WHEN COMPLETED & SHOW NEW PAGES
                     progressLock.unlock();
                     Platform.runLater(new Runnable() {
                         @Override
